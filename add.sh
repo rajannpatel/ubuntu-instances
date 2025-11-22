@@ -43,6 +43,24 @@ if [[ -n "$SSL_CERTIFICATE_CHAIN_PATH" ]]; then
   sed -i "/# - SSL_CERTIFICATE_CHAIN_FILE/a \\  - | \\n    cat <<EOF > /etc/ssl/certs/landscape_server_ca.crt\\n${SSL_CERTIFICATE_CHAIN}\\n    EOF" cloud-init.yaml
 fi
 
+# insert the license.txt file
+if [[ -s license.txt ]]; then
+
+  awk '
+  /write_files:/ { in_wf=1; print; next }
+  in_wf && /^$/ { 
+      print "  - path: /etc/landscape/license.d/license.txt";
+      print "    permissions: \"0644\"";
+      print "    content: |";
+      while ((getline line < "license.txt") > 0) print "      " line;
+      close("license.txt");
+      in_wf=0;
+  }
+  { print }
+  ' cloud-init.yaml > cloud-init.tmp && mv cloud-init.tmp cloud-init.yaml
+
+fi
+
 # Launch Noble instance with the Landscape Server cloud-init.yaml
 INSTANCE_NAME="$TODAY-lds-${LANDSCAPE_FQDN//./-}"
 if [ -n "$LANDSCAPE_FQDN" ]; then

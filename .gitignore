@@ -1,3 +1,4 @@
 # Ignore variables.txt after initial commit
 variables.txt
 cloud-init.yaml
+license.txt

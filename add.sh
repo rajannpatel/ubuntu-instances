@@ -50,7 +50,7 @@ if [ -n "$LANDSCAPE_FQDN" ]; then
 else
   echo "Error: LANDSCAPE_FQDN is empty. Aborting changes to /etc/hosts."
 fi
-lxc launch ubuntu:24.04 "$INSTANCE_NAME" --config=user.user-data="$(cat cloud-init.yaml) --verbose"
+lxc launch ubuntu:24.04 "$INSTANCE_NAME" --config=user.user-data="$(cat cloud-init.yaml)" --verbose
 lxc exec "$INSTANCE_NAME" --verbose -- cloud-init status --wait
 LANDSCAPE_IP=$(lxc info "$INSTANCE_NAME" | grep -E 'inet:.*global' | awk '{print $2}' | cut -d/ -f1)
 echo "$LANDSCAPE_IP $LANDSCAPE_FQDN" | sudo tee -a /etc/hosts > /dev/null

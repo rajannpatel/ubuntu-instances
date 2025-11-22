@@ -28,13 +28,6 @@ Initialize LXD
 > lxd init --auto
 > ```
 
-For the LXD container to reach the external network, the MTU on the bridge must match the default network adapter. This extra step is necessary in some virtualized environments, such as Google Cloud's Compute Engine where the MTU is lower, or Oracle Cloud where jumbo frames are enabled by default, and the MTU is higher. This is not likely to impact you on most networks, where the default MTU is 1500.
-
-> ```bash
-> read -r INTERFACE < <(ip route | awk '$1=="default"{print $5; exit}')
-> lxc network set lxdbr0 bridge.mtu=$(ip link show $INTERFACE | awk '/mtu/ {print $5}')
-> ```
-
 ## Step 2. Decide between self-signed SSL and valid SSL certificates
 
 ### Option 1: Use self-signed SSL certificates and launch landscape.example.com
@@ -61,7 +54,7 @@ To use valid SSL certificates on your Landscape Server LXD instance, there are t
    - SSL_CERTIFICATE_KEY_PATH
    - SSL_CERTIFICATE_CHAIN_PATH
 
-To obtain a wildcard subdomain SSL certificate from LetsEncrypt, run:
+To obtain or renew a wildcard subdomain SSL certificate from LetsEncrypt, run:
 
 > ```bash
 > sudo snap install certbot --classic
